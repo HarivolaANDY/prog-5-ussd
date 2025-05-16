@@ -1,25 +1,26 @@
 from sys import exit
-import time
 import threading
 
 free_messages = 3
 timeout = None
-current_language = 'en' 
+current_language = 'en'
+
 
 def ask_question(question):
     global timeout
     print(question, end='')
-    
+
     def terminate():
         print('HMI terminated.')
         exit()
 
     timeout = threading.Timer(15, terminate)
     timeout.start()
-    
+
     answer = input().strip()
     timeout.cancel()
     return answer
+
 
 def ussd_menu(show_back=False):
     global free_messages, current_language
@@ -34,7 +35,7 @@ def ussd_menu(show_back=False):
             + "5. Language\n"
             + "Choose option: "
         )
-    else:  
+    else:
         menu_text = (
             "Menu USSD:\n"
             + ("0. Retour\n" if show_back else "")
@@ -45,13 +46,13 @@ def ussd_menu(show_back=False):
             + "5. Langue\n"
             + "Choisissez une option: "
         )
-    
+
     option = ask_question(menu_text)
-    
+
     if show_back and option == '0':
         print('Back')
         return ussd_menu(False)
-    
+
     if option == '1':
         recipient_number = ask_question('0. Back\nEnter recipient 10-digit number: ' if current_language == 'en' else '0. Retour\nEntrez le numéro de 10 chiffres du destinataire: ')
         if recipient_number == '0':
@@ -59,7 +60,7 @@ def ussd_menu(show_back=False):
         if not recipient_number.isdigit() or len(recipient_number) != 10:
             print('Invalid number.' if current_language == 'en' else 'Numéro invalide.')
             return ussd_menu(True)
-        
+
         amount = ask_question('0. Back\nEnter amount (>=100): ' if current_language == 'en' else '0. Retour\nEntrez le montant (>=100): ')
         if amount == '0':
             return ussd_menu(True)
@@ -68,18 +69,18 @@ def ussd_menu(show_back=False):
             if amt < 100:
                 print('Invalid amount.' if current_language == 'en' else 'Montant invalide.')
                 return ussd_menu(True)
-            
-            reason = ask_question('Enter reason for the amount: ' if current_language == 'en' else 'Entrez la raison du montant: ')
+
+            # Removed unused variable 'reason'
             secret_code = ask_question('Enter secret code (4 digits): ' if current_language == 'en' else 'Entrez le code secret (4 chiffres): ')
             if len(secret_code) != 4 or not secret_code.isdigit():
                 print('Invalid secret code. It must be exactly 4 digits.' if current_language == 'en' else 'Code secret invalide. Il doit comporter exactement 4 chiffres.')
                 return ussd_menu(True)
-            
+
             print('Transfer successful' if current_language == 'en' else 'Transfert réussi')
             exit()
         except ValueError:
             print('Invalid amount.' if current_language == 'en' else 'Montant invalide.')
-        
+
     elif option == '2':
         plan_option = ask_question('0. Back\n1. Plan for my number\n2. Plan for another number\nChoose option: ' if current_language == 'en' else '0. Retour\n1. Plan pour mon numéro\n2. Plan pour un autre numéro\nChoisissez une option: ')
         if plan_option == '0':
@@ -179,7 +180,7 @@ def ussd_menu(show_back=False):
         else:
             print('Invalid option.' if current_language == 'en' else 'Option invalide.')
             return ussd_menu(True)
-    
+
     elif option == '3':
         if free_messages <= 0:
             print('Daily message limit reached.' if current_language == 'en' else 'Limite quotidienne de messages atteinte.')
@@ -199,7 +200,7 @@ def ussd_menu(show_back=False):
             if free_messages == 0:
                 print('Daily message limit reached.' if current_language == 'en' else 'Limite quotidienne de messages atteinte.')
             exit()
-    
+
     elif option == '4':
         recipient_number = ask_question('Enter recipient 10-digit number for beep: ' if current_language == 'en' else 'Entrez le numéro de 10 chiffres du destinataire pour le bip: ')
         if recipient_number == '0':
@@ -209,7 +210,7 @@ def ussd_menu(show_back=False):
             return ussd_menu(True)
         print('Beep sent to', recipient_number)
         exit()
-    
+
     elif option == '5':
         language_option = ask_question('0. Back\n1. English\n2. French\nChoose option: ' if current_language == 'en' else '0. Retour\n1. Anglais\n2. Français\nChoisissez une option: ')
         if language_option == '0':
@@ -225,10 +226,11 @@ def ussd_menu(show_back=False):
         else:
             print('Invalid option.' if current_language == 'en' else 'Option invalide.')
             return ussd_menu(True)
-    
+
     else:
         print('Invalid option.' if current_language == 'en' else 'Option invalide.')
-    
+
     ussd_menu(show_back)
+
 
 ussd_menu(False)
