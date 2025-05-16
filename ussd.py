@@ -70,7 +70,6 @@ def ussd_menu(show_back=False):
                 print('Invalid amount.' if current_language == 'en' else 'Montant invalide.')
                 return ussd_menu(True)
 
-            # Removed unused variable 'reason'
             secret_code = ask_question('Enter secret code (4 digits): ' if current_language == 'en' else 'Entrez le code secret (4 chiffres): ')
             if len(secret_code) != 4 or not secret_code.isdigit():
                 print('Invalid secret code. It must be exactly 4 digits.' if current_language == 'en' else 'Code secret invalide. Il doit comporter exactement 4 chiffres.')
