@@ -24,6 +24,11 @@ def ask_question(question):
 
 def ussd_menu(show_back=False):
     global free_messages, current_language
+    combination = ask_question('Enter the combination to access the menu : ')
+    while combination != '#111#':
+        print('Invalid combination. Please try again.')
+        combination = ask_question('Enter the combination to access the menu : ')
+
     if current_language == 'en':
         menu_text = (
             "Menu USSD:\n"
